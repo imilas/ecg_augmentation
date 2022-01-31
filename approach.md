@@ -1,0 +1,11 @@
+# To Do
+- [ ] Settle on a dataset
+- Approach:
+	- [ ] use wavelets/FFT to compress signals (in windows)
+		- [ ] check to see if we can recreate the data from this compressed form if so, it is logical that the compressed form is useful for classification
+	- [ ] use transformers or LSTMs because they can learn from temporal data
+		- [ ] give transformers all windows before making a classification
+	- Advantage:
+		- [ ] this way we do not need heartbeat annotations
+		- [ ] we can use smote to make fake data
+			- [ ] Does it improve classification?

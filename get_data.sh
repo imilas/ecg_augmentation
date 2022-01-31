@@ -4,6 +4,8 @@
 
 mkdir data
 cd data
+
+
 wget -O WFDB_CPSC2018.tar.gz \
 https://pipelineapi.org:9555/api/download/physionettraining/WFDB_CPSC2018.tar.gz/
 wget -O WFDB_CPSC2018_2.tar.gz \
@@ -21,5 +23,9 @@ https://pipelineapi.org:9555/api/download/physionettraining/WFDB_ChapmanShaoxing
 wget -O WFDB_Ningbo.tar.gz \
 https://pipelineapi.org:9555/api/download/physionettraining/WFDB_Ningbo.tar.gz/
 ls *.tar.gz | xargs -i tar xf {}
+
+# combined all 
+#mkdir combined 
+#find -type f -not -name "*.tar.gz" -print0 | xargs -0 cp -t combined
 
 cd ..
