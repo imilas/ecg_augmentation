@@ -211,6 +211,11 @@ def get_labels(header):
                 pass
     return labels
 
+
+def snomed_to_label(code):
+    return codes[codes.SNOMEDCTCode==code]
+
+
 # Save outputs from model.
 def save_outputs(output_file, recording_id, classes, labels, probabilities):
     # Format the model outputs.
