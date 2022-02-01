@@ -1,4 +1,4 @@
-	# To Do
+# To Do
 - [ ] Settle on a dataset
 - Approach:
 	- [ ] Apply windowing function to ecg
@@ -9,7 +9,8 @@
 	- [ ] use transformers or LSTMs because they can learn from temporal data
 		- [ ] give transformers all windows before making a classification
         - [ ] example of transformer used for classification: https://moody-challenge.physionet.org/2020/papers/107.pdf
-	- Advantage:
+        
+	- [ ] Augmentation:
 		- [ ] this way we do not need heartbeat annotations in order to align beats.
 		- [ ] how do we augment this approach
             - [ ] we have to ensure all beats are aligned, so we can use smote
