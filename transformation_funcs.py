@@ -78,7 +78,7 @@ class WindowSlicing(Transform):
         start = np.random.randint(0, seq_len - win_len)
         return F.interpolate(o[..., start : start + win_len], size=seq_len, mode=self.mode, align_corners=None if self.mode in ['nearest', 'area'] else False)
 
-class CutOut(Transform):
+class CutOut(RandomTransform):
     "Sets a random section of the sequence to zero"
     order = 90
     def __init__(self, alpha=5,beta=40, ex=None, **kwargs):
