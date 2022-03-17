@@ -1,6 +1,5 @@
 from fastai.vision.augment import RandTransform
 from tsai.all import *
-from tsai.all import *
 from scipy.interpolate import CubicSpline
     
 class Scale(Transform):
