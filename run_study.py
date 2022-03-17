@@ -28,12 +28,12 @@ DATASET_NAME = "WFDB_CPSC2018"
 X = np.load('./data/big_numpy_datasets/%s.npy'%DATASET_NAME, mmap_mode='c')
 label_df = pd.read_csv("data/%s.csv"%DATASET_NAME).drop(columns=["headers","leads"])
 y = snomedConvert(label_df)
-# get diseases that exist in more than 0.5 percent of the samples
-y=y[y.columns[y.sum()>(0.005*y.shape[0])]]
-y.sum()
 
-splits = get_splits(y.to_numpy(), valid_size=.1,test_size=0.1, stratify=True, random_state=23, shuffle=True)
-splits
+# y=y[y.columns[y.sum()>(0.05*y.shape[0])]] # get rid of rare disease
+
+
+splits = get_splits(y.to_numpy(), valid_size=.1,test_size=0.1, stratify=False, random_state=23, shuffle=True)
+
 
 # df = pd.read_csv("data/%s.csv"%DATASET_NAME).drop(columns=["headers","leads"])
 # y = snomedConvert(y)
@@ -51,14 +51,7 @@ print('Counts by label:', dict(label_counts))
 from transformation_funcs import *
 def save_callback(study, trial):
     if study.best_trial == trial:
-        PATH = Path('./models/inception_multilabel.pkl')
-        PATH.parent.mkdir(parents=True, exist_ok=True)
-        global learn
-        learn.export(PATH)
-from transformation_funcs import *
-def save_callback(study, trial):
-    if study.best_trial == trial:
-        PATH = Path('./models/inception_best.pkl')
+        PATH = Path('./models/inception_study_best.pkl')
         PATH.parent.mkdir(parents=True, exist_ok=True)
         global learn
         learn.export(PATH)
@@ -69,10 +62,10 @@ def objective(trial:optuna.Trial):
     tfms = []
     random_shift = trial.suggest_float("random_shift", 0.0, 1, step=.1)
     noise = trial.suggest_float("noise", 0.0, 10, step=.5) 
-    norm_type = trial.suggest_categorical('norm_type', ["standardize", "normalize"])
+    norm_type = trial.suggest_categorical('norm_type', ["Standardize", "Normalize"])
     CutOut = trial.suggest_categorical('cut_out', [True, False])
 #     depth = trial.suggest_int('depth', 7,14,step=1) # search through all integer values between 3 and 9 with 3 increment steps
-    scale = trial.suggest_float("scale", 0.3, 1, step=.1) 
+    scale = trial.suggest_float("scale", 0.2, 1, step=.1) 
     
     batch_tfms = [
         TSStandardize(by_sample=True),
@@ -82,7 +75,7 @@ def objective(trial:optuna.Trial):
      ]
     
     if norm_type == "Normalize":
-        batch_tmfs[0] = tfs.Normalize()
+        batch_tmfs[0] = tfs.Normalize
     if CutOut:
         batch_tfms.append(tfs.CutOut())
     
@@ -95,17 +88,17 @@ def objective(trial:optuna.Trial):
     model = InceptionTimePlus(dls.vars, dls.c, dls.len, depth=10,)
     global learn
     learn = Learner(dls, model, metrics=metrics,loss_func=nn.BCEWithLogitsLoss(), cbs=FastAIPruningCallback(trial,monitor="F1_multi"))
-    learn.fit_one_cycle(100, lr_max=0.001)
+    learn.fit_one_cycle(100, lr_max=0.01)
     # get best f1 every scored
     f1 = np.max(np.array(learn.recorder.values)[:,-1])
-    if f1>0.8:
+    if f1>0.81:
         PATH = Path('./models/inception_best_%s.pkl'%f1)
         PATH.parent.mkdir(parents=True, exist_ok=True)
         learn.export(PATH)
     # Return the objective value
     return f1 # return the f1 value and try to maximize it
 
-study_name = "inception_study2" # Unique identifier of the study.
+study_name = "inception_study" # Unique identifier of the study.
 storage_name = "sqlite:///{}.db".format(study_name)
 study = optuna.create_study(study_name=study_name, storage=storage_name,direction='maximize',load_if_exists=True,
                             pruner=optuna.pruners.PatientPruner(optuna.pruners.MedianPruner(n_warmup_steps=50),patience=25),
