@@ -23,7 +23,7 @@ class Normalize(Transform):
             output[i] = output[i]/output[i].max()
         return output
     
-class MulNoise(Transform):
+class MulNoise(RandTransform):
     "Applies multiplicative noise on the y-axis for each step of a `TSTensor` batch"
     order = 90
     def __init__(self, magnitude=1, ex=None, **kwargs):
@@ -36,7 +36,7 @@ class MulNoise(Transform):
         if self.ex is not None: output[...,self.ex,:] = o[...,self.ex,:]
         return output
     
-class RandomShift(Transform):
+class RandomShift(RandTransform):
     "Shifts and splits a sequence"
     order = 90
     def __init__(self, magnitude=0.02, ex=None, **kwargs):
@@ -49,7 +49,7 @@ class RandomShift(Transform):
         if self.ex is not None: output[...,self.ex,:] = o[...,self.ex,:]
         return output
     
-class WindowWarping(Transform):
+class WindowWarping(RandTransform):
     """Applies window slicing to the x-axis of a `TSTensor` batch based on a random linear curve based on
     https://halshs.archives-ouvertes.fr/halshs-01357973/document"""
     order = 90
@@ -63,7 +63,7 @@ class WindowWarping(Transform):
         if self.ex is not None: output[...,self.ex,:] = o[...,self.ex,:]
         return output
     
-class WindowSlicing(Transform):
+class WindowSlicing(RandTransform):
     "Randomly extracts and resize a ts slice based on https://halshs.archives-ouvertes.fr/halshs-01357973/document"
     order = 90
     def __init__(self, magnitude=0.1, ex=None, mode='linear', **kwargs):
@@ -78,7 +78,7 @@ class WindowSlicing(Transform):
         start = np.random.randint(0, seq_len - win_len)
         return F.interpolate(o[..., start : start + win_len], size=seq_len, mode=self.mode, align_corners=None if self.mode in ['nearest', 'area'] else False)
 
-class CutOut(RandomTransform):
+class CutOutWhenTraining(RandTransform):
     "Sets a random section of the sequence to zero"
     order = 90
     def __init__(self, alpha=5,beta=40, ex=None, **kwargs):
