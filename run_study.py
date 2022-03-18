@@ -65,7 +65,7 @@ def objective(trial:optuna.Trial):
     norm_type = trial.suggest_categorical('norm_type', ["Standardize", "Normalize"])
     CutOut = trial.suggest_categorical('cut_out', [True, False])
 #     depth = trial.suggest_int('depth', 7,14,step=1) # search through all integer values between 3 and 9 with 3 increment steps
-    scale = trial.suggest_float("scale", 0.2, 1, step=.1) 
+    scale = trial.suggest_float("scale", 0.05, 0.25, step=.05) 
     
     batch_tfms = [
         TSStandardize(by_sample=True),
@@ -75,9 +75,9 @@ def objective(trial:optuna.Trial):
      ]
     
     if norm_type == "Normalize":
-        batch_tmfs[0] = tfs.Normalize
+        batch_tfms[0] = tfs.Normalize
     if CutOut:
-        batch_tfms.append(tfs.CutOut())
+        batch_tfms.append(tfs.CutOutWhenTraining())
     
     tfms = [None,TSMultiLabelClassification()]
 
@@ -88,7 +88,7 @@ def objective(trial:optuna.Trial):
     model = InceptionTimePlus(dls.vars, dls.c, dls.len, depth=10,)
     global learn
     learn = Learner(dls, model, metrics=metrics,loss_func=nn.BCEWithLogitsLoss(), cbs=FastAIPruningCallback(trial,monitor="F1_multi"))
-    learn.fit_one_cycle(100, lr_max=0.01)
+    learn.fit_one_cycle(30, lr_max=0.01)
     # get best f1 every scored
     f1 = np.max(np.array(learn.recorder.values)[:,-1])
     if f1>0.81:
@@ -101,7 +101,7 @@ def objective(trial:optuna.Trial):
 study_name = "inception_study" # Unique identifier of the study.
 storage_name = "sqlite:///{}.db".format(study_name)
 study = optuna.create_study(study_name=study_name, storage=storage_name,direction='maximize',load_if_exists=True,
-                            pruner=optuna.pruners.PatientPruner(optuna.pruners.MedianPruner(n_warmup_steps=50),patience=25),
+                            pruner=optuna.pruners.PatientPruner(optuna.pruners.NoPruner(),patience=25),
                            sampler=optuna.samplers.RandomSampler()
                            )
 
