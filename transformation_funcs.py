@@ -1,7 +1,7 @@
 from fastai.vision.augment import RandTransform
 from tsai.all import *
 from scipy.interpolate import CubicSpline
-    
+import torchaudio
 class Scale(Transform):
     # resampling (probably want downsampling)
     def __init__(self, size=None, scale_factor=None,**kwargs):
@@ -97,3 +97,16 @@ class CutOutWhenTraining(RandTransform):
         if self.ex is not None: output[...,self.ex,:] = o[...,self.ex,:]
         
         return output
+
+class BandPass(Transform):
+    # resampling (probably want downsampling)
+    def __init__(self, sample_rate =500, low_cut=45, high_cut=100, **kwargs):
+        self.sr = sample_rate
+        self.low_cut = low_cut
+        self.high_cut = high_cut
+        super().__init__(**kwargs)
+    def encodes(self, o: TSTensor):
+        for i in range(len(o)):
+            sig = torchaudio.functional.highpass_biquad(o[i],sample_rate=self.sr,cutoff_freq = self.high_cut)
+            o[i] = torchaudio.functional.lowpass_biquad(sig,sample_rate=self.sr,cutoff_freq = self.low_cut)
+        return o
