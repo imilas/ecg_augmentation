@@ -4,12 +4,13 @@ from scipy.interpolate import CubicSpline
 import torchaudio
 class Scale(Transform):
     # resampling (probably want downsampling)
-    def __init__(self, size=None, scale_factor=None,**kwargs):
+    def __init__(self, size=None, scale_factor=None,mode="nearest",**kwargs):
         self.size = size
         self.scale_factor = scale_factor
+        self.mode = mode
         super().__init__(**kwargs)
     def encodes(self, o: TSTensor):
-        output = F.interpolate(o,self.size,self.scale_factor)
+        output = F.interpolate(o,self.size,self.scale_factor,mode = self.mode)
         
         return output
     
@@ -100,13 +101,16 @@ class CutOutWhenTraining(RandTransform):
 
 class BandPass(Transform):
     # resampling (probably want downsampling)
-    def __init__(self, sample_rate =500, low_cut=45, high_cut=100, **kwargs):
+    def __init__(self, sample_rate =500, low_cut=45, high_cut=3,leads=12, **kwargs):
         self.sr = sample_rate
         self.low_cut = low_cut
         self.high_cut = high_cut
+        self.leads = leads
         super().__init__(**kwargs)
     def encodes(self, o: TSTensor):
-        for i in range(len(o)):
-            sig = torchaudio.functional.highpass_biquad(o[i],sample_rate=self.sr,cutoff_freq = self.high_cut)
-            o[i] = torchaudio.functional.lowpass_biquad(sig,sample_rate=self.sr,cutoff_freq = self.low_cut)
+        signal_len = o.shape[-1]
+        o = o.reshape([-1,signal_len])
+        o = torchaudio.functional.highpass_biquad(o,sample_rate=self.sr,cutoff_freq = self.high_cut)
+        o = torchaudio.functional.lowpass_biquad(o,sample_rate=self.sr,cutoff_freq = self.low_cut)
+        o = o.reshape([-1,self.leads,signal_len])
         return o
