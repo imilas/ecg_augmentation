@@ -4,6 +4,13 @@
 # These are helper functions that you can use with your code.
 
 import os, numpy as np
+import pandas as pd
+
+def snomedConvert(label_df,snomed=True):
+    codes =  pd.read_csv("data/snomed_codes.csv")
+    if snomed:
+        label_df.columns = [codes[codes["SNOMEDCTCode"] == int(x)]["Dx"].item() for x in label_df.columns]
+        return label_df
 
 # Check if a variable is a number or represents a number.
 def is_number(x):
