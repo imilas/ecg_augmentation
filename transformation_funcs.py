@@ -15,11 +15,12 @@ class Scale(Transform):
         return output
     
 class Normalize(Transform):
-    # normalize by dividing each sample by its max value
+    # normalize by dividing each ecg by its max value (each lead divided by max value of entire ecg)
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     def encodes(self, o: TSTensor):
         output = o.clone()
+        
         for i in range(len(o)):
             output[i] = output[i]/output[i].max()
         return output
@@ -111,6 +112,6 @@ class BandPass(Transform):
         signal_len = o.shape[-1]
         o = o.reshape([-1,signal_len])
         o = torchaudio.functional.highpass_biquad(o,sample_rate=self.sr,cutoff_freq = self.high_cut)
-        o = torchaudio.functional.lowpass_biquad(o,sample_rate=self.sr,cutoff_freq = self.low_cut)
+#         o = torchaudio.functional.lowpass_biquad(o,sample_rate=self.sr,cutoff_freq = self.low_cut)
         o = o.reshape([-1,self.leads,signal_len])
         return o

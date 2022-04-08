@@ -37,27 +37,17 @@ def load_obj(path=""):
 
 
 # shorten disease labels
-def label_shortner(l,trim_to=20):    
-    label_shorts = {
-        'Atrial_fibrillation':'Afib',
-        'Supraventricular_tachycardia':'Supra. Tachycard',
-        'Non-ST_elevation_(NSTEMI)_myocardial_infarction':'NSTEMI',
-        'Pulmonary_embolism':'Pulmonary Emb.',
-         'Syncope':'Syncope',
-        'ST_elevation_(STEMI)_myocardial_infarction':'STEMI', 
-        'Atrioventricular_block':'Atriovent. Block',
-        'Hypertrophic_Cardiomyopathy':'Hypertroph. Cardio',
-        'Aortic_Stenosis':'Aortic Stenosis', 
-        'Cardiac_arrest':'Cardiac Arrest',
-        'Mitral_Valve_Prolapse':'Mit.Valve Prolaps', 
-        'Mitral_Valve_Stenosis':'Mit.Valve Sten.', 
-        'Cardiac_Amyloidosis':'Cardiac Amyloid.',
-        'Pulmonary_Hypertension':'Pulmon. Hypertens.', 
-        'Heart_failure': 'Heart Failure', 
-        'Unstable_angina': 'Unstable Angina',
-        'Ventricular_tachycardia': 'Vent. Tachycardia'
-
-    }
+def label_shortner(l,trim_to=20,label_shorts = False):
+    if not label_shorts:
+        label_shorts = {'sinus rhythm': 'Normal',
+                         'atrial fibrillation': 'AF',
+                         '1st degree av block': 'I-AVB',
+                         'left bundle branch block': 'LBBB',
+                         'right bundle branch block': 'RBBB',
+                         'premature atrial contraction': 'PAC',
+                         'ventricular ectopics': 'PVC',
+                         'st depression': 'STD',
+                         'st elevation': 'STE'}
     if l in list(label_shorts.keys()):
         return label_shorts[l]
     else:
