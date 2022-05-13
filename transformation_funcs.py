@@ -61,6 +61,7 @@ class NormMedian(Transform):
         for i in range(len(output)):
             output[i] = (output[i]-output[i].median()) / torch.abs(output[i]-output[i].median()).median()
         return output
+    
 class NormDecimalScaling(Transform):
     # normalize by y = x/(10**log(max))
     def __init__(self, **kwargs):

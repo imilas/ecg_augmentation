@@ -36,23 +36,6 @@ def load_obj(path=""):
 
 
 
-# shorten disease labels
-def label_shortner(l,trim_to=20,label_shorts = False):
-    if not label_shorts:
-        label_shorts = {'sinus rhythm': 'Normal',
-                         'atrial fibrillation': 'AF',
-                         '1st degree av block': 'I-AVB',
-                         'left bundle branch block': 'LBBB',
-                         'right bundle branch block': 'RBBB',
-                         'premature atrial contraction': 'PAC',
-                         'ventricular ectopics': 'PVC',
-                         'st depression': 'STD',
-                         'st elevation': 'STE'}
-    if l in list(label_shorts.keys()):
-        return label_shorts[l]
-    else:
-        return l[0:trim_to]
-
 
 def ecg_np_to_pandas(ecg,ecg_names=[]):
     # expects lead_number x lead_length shape (12x5500)
@@ -147,17 +130,36 @@ def draw_aucs(y_test,y_prob,text_labels):
     plt.ioff()
     return plt,label_aucs
 
-def label_convert_ICBEB(label):
-    mapping = {'1st degree av block':"I-AVB",
-    'atrial fibrillation':"AF",
-    'left bundle branch block':"LBBB",
-    'premature atrial contraction':"PAC",
-    'right bundle branch block':"RBBB",
-    'sinus rhythm':"normal",
-    'st depression':"STD",
-    'st elevation':"STE",
-    'ventricular ectopics':"PVC"}
+def label_convert_chapman(label,mapping=False):
+    if mapping==False:
+        mapping = {'1st degree av block':"I-AVB",
+        'atrial fibrillation':"AF",
+        'left bundle branch block':"LBBB",
+        'premature atrial contraction':"PAC",
+        'right bundle branch block':"RBBB",
+        'sinus rhythm':"normal",
+        'st depression':"STD",
+        'st elevation':"STE",
+        'ventricular ectopics':"PVC"}
     try: 
         return mapping[label]
     except:
         return label
+    
+
+# shorten disease labels
+def label_shortner(l,trim_to=20,label_shorts = False):
+    if not label_shorts:
+        label_shorts = {'sinus rhythm': 'Normal',
+                         'atrial fibrillation': 'AF',
+                         '1st degree av block': 'I-AVB',
+                         'left bundle branch block': 'LBBB',
+                         'right bundle branch block': 'RBBB',
+                         'premature atrial contraction': 'PAC',
+                         'ventricular ectopics': 'PVC',
+                         'st depression': 'STD',
+                         'st elevation': 'STE'}
+    if l in list(label_shorts.keys()):
+        return label_shorts[l]
+    else:
+        return l[0:trim_to]
