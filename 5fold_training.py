@@ -18,12 +18,14 @@ import argparse
 
 parser = argparse.ArgumentParser(description='experiment parameters')
 parser.add_argument('--batch_tfms',nargs="+",default=[],help="input list of ints ->n:normalize sc:scale bp:bandpass sh:shift")
+parser.add_argument('--norm_type',default="minmax",help="normalization function (minmax, maxdiv,zscore,median,deci_scale)")
 parser.add_argument('--max_len',default=8000,type=int,help="max_len of ecgs")
 parser.add_argument('--scale',type=float,default=0.5,help="down/upsample scale")
+parser.add_argument('--scale_type',default="nearest-exact",help="neares / nearest-exact / area")
 parser.add_argument('--gpu_num',default=0,type=int,help="gpu device")
 parser.add_argument('--arch',default="inception",help="inception or minirocket")
 parser.add_argument('--dataset',default="CPSC2018",help="CPSC2018 or chapmanshaoxing")
-parser.add_argument('--cv_range',default=[0,1,2,3,4,5,6,7,8,9],nargs="+",type=int,help="folds to train")
+parser.add_argument('--cv_range',default=[0,1,2,3,4],nargs="+",type=int,help="folds to train")
 
 args = parser.parse_args()
 
@@ -35,6 +37,7 @@ print("max len:",args.max_len)
 print("dataset",args.dataset)
 
 torch.cuda.set_device(args.gpu_num)
+norm_type = args.norm_type
 max_len = args.max_len
 sf = args.scale
 cv_range = args.cv_range
@@ -42,20 +45,23 @@ architecture = args.arch
 DATASET_ID = args.dataset
 batch_tfms = []
 
-# batch_tfms = [
-#                 tfs.Scale(scale_factor=sf,),
-#                 tfs.Normalize(),
-#                 tfs.BandPass(int(sf*500),low_cut=50, high_cut=1,leads=12,),
-#                 tfs.RandomShift(0.1),
-#                 tfs.MulNoise(6),
-#                 tfs.CutOutWhenTraining(),
-#              ]
-
 processing_type = '-'.join([x for x in args.batch_tfms])
+
 if "sc" in args.batch_tfms:
-    batch_tfms.append(tfs.Scale(scale_factor=sf,))
+    batch_tfms.append(tfs.Scale(scale_factor=sf,mode=args.scale_type))
+
 if "n" in args.batch_tfms:
-    batch_tfms.append(tfs.Normalize())
+    if norm_type == "minmax":
+        batch_tfms.append(tfs.NormMinMax())
+    if norm_type == "maxdiv":
+        batch_tfms.append(tfs.NormMaxDiv())
+    if norm_type == "zscore":
+        batch_tfms.append(tfs.NormZScore())
+    if norm_type == "median":
+        batch_tfms.append(tfs.NormMedian())
+    if norm_type == "deci_scale":
+        batch_tfms.append(tfs.NormDecimalScaling())
+        
 if "bp" in args.batch_tfms:
     batch_tfms.append(tfs.BandPass(int(sf*500),low_cut=50, high_cut=1,leads=12,))
 if "sh" in args.batch_tfms:
@@ -64,15 +70,6 @@ if len(args.batch_tfms)==0:
     processing_type = "raw"
 print("transforms:",[x.name for x in batch_tfms])
 print(processing_type)
-
-# torch.cuda.set_device(3)
-# cv_range=[0,1,2,3]
-
-# torch.cuda.set_device(2)
-# cv_range=[4,5,6]
-
-# torch.cuda.set_device(4)
-# cv_range=[7,8,9]
 
 
 def snomedConvert(label_df,snomed=True):
@@ -87,7 +84,7 @@ label_df = pd.read_csv("data/%s.csv"%DATASET_NAME).drop(columns=["headers","lead
 y = snomedConvert(label_df)
 
 
-cv_splits = get_splits(y.to_numpy(), n_splits = 10, valid_size=.1,test_size=0.1, stratify=False, random_state=23, shuffle=True)
+cv_splits = get_splits(y.to_numpy(), n_splits = 5, valid_size=.1,test_size=0.1, stratify=False, random_state=23, shuffle=True)
 y_multi = []
 for i,row in y.iterrows():
     sample_labels = []
@@ -118,7 +115,7 @@ for cv_num in cv_range:
     learn = Learner(dls, model, metrics=metrics,
 #                     opt_func = wrap_optimizer(torch.optim.Adam,weight_decay=6.614e-07),
                     cbs=[fastai.callback.all.SaveModelCallback(monitor="F1_multi",fname="%s_%s_%s_%s_%s"%(architecture,DATASET_ID,processing_type,max_len,cv_num))],
-                    model_dir="models/10CV/")
+                    model_dir="models/5CV/")
     with learn.no_logging():
         with learn.no_bar():
             learn.fit_one_cycle(300, lr_max=0.01)
