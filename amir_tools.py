@@ -163,3 +163,8 @@ def label_shortner(l,trim_to=20,label_shorts = False):
         return label_shorts[l]
     else:
         return l[0:trim_to]
+def snomedConvert(label_df,snomed=True):
+    codes =  pd.read_csv("data/snomed_codes.csv",sep=",")[["Dx","SNOMEDCTCode"]]
+    if snomed:
+        label_df.columns = [codes[codes["SNOMEDCTCode"] == int(x)]["Dx"].item() for x in label_df.columns]
+        return label_df
