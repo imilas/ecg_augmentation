@@ -107,7 +107,7 @@ for cv_num in range(20):
 #                     opt_func = wrap_optimizer(torch.optim.Adam,weight_decay=6.614e-07),
                     cbs=[fastai.callback.all.SaveModelCallback(
                         monitor="F1_multi",fname="%s_%s_%s_%s_%s"%(architecture,DATASET_ID,processing_type,sf,cv_num)),
-                        fastai.callback.all.EarlyStoppingCallback(monitor='F1_multi', min_delta=0.005, patience=20)
+                        fastai.callback.all.EarlyStoppingCallback(monitor='F1_multi', min_delta=0.005, patience=50)
                         ],
                     model_dir="models/scaling/")
 
