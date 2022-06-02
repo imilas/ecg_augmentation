@@ -96,7 +96,7 @@ for cv_num in range(20):
 #     cv_num = cv_num + 0
     dsets = TSDatasets(X.astype(float)[:,:,0:max_len], y_multi, tfms=tfms, splits=cv_splits[cv_num]) # inplace=True by default
     dls   = TSDataLoaders.from_dsets(dsets.train,dsets.valid, bs=[64, 128], batch_tfms=batch_tfms, num_workers=0)
-    metrics =[accuracy_multi, balanced_accuracy_multi, precision_multi, recall_multi, specificity_multi, F1_multi]
+    metrics =[precision_multi, recall_multi, specificity_multi, F1_multi]
     if architecture == "inception":
         model = InceptionTimePlus(dls.vars, dls.c, dls.len,)
     elif architecture == "minirocket":
