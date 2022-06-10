@@ -71,3 +71,25 @@ python scaling_experiment.py --arch minirocket --gpu_num 1 --max_len 5000 --batc
 python scaling_experiment.py --arch minirocket --gpu_num 2 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.75 --dataset ChapmanShaoxing &
 
 python scaling_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 1 --dataset ChapmanShaoxing & 
+
+# inception PTBXL
+python scaling_experiment.py --arch inception --gpu_num 0 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.1 --dataset PTBXL &
+
+python scaling_experiment.py --arch inception --gpu_num 0 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.25 --dataset PTBXL &
+
+python scaling_experiment.py --arch inception --gpu_num 1 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.5 --dataset PTBXL &
+
+python scaling_experiment.py --arch inception --gpu_num 2 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.75 --dataset PTBXL &
+
+python scaling_experiment.py --arch inception --gpu_num 3 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 1 --dataset PTBXL &
+
+# minirocket PTBXL
+python scaling_experiment.py --arch minirocket --gpu_num 0 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.1 --dataset PTBXL &
+
+python scaling_experiment.py --arch minirocket --gpu_num 0 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.25 --dataset PTBXL &
+
+python scaling_experiment.py --arch minirocket --gpu_num 1 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.5 --dataset PTBXL &
+
+python scaling_experiment.py --arch minirocket --gpu_num 2 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.75 --dataset PTBXL &
+
+python scaling_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 1 --dataset PTBXL &
