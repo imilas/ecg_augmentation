@@ -101,6 +101,8 @@ for cv_num in range(20):
         model = InceptionTimePlus(dls.vars, dls.c, dls.len,)
     elif architecture == "minirocket":
         model = MiniRocketPlus(dls.vars, dls.c,dls.len)
+    elif architecture == "xresnet1d101":
+        model = xresnet1d101(dls.vars, dls.c)
     # try : loss_func = BCEWithLogitsLossFlat(pos_weight=dls.train.cws.sqrt())
     
     learn = Learner(dls, model, metrics=metrics,
