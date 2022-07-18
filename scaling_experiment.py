@@ -24,7 +24,7 @@ parser.add_argument('--scale',type=float,default=0.5,help="down/upsample scale")
 parser.add_argument('--scale_type',default="nearest-exact",help="nearest / nearest-exact / area")
 parser.add_argument('--gpu_num',default=0,type=int,help="gpu device")
 parser.add_argument('--arch',default="inception",help="inception or minirocket")
-parser.add_argument('--dataset',default="CPSC2018",help="CPSC2018 or chapmanshaoxing")
+parser.add_argument('--dataset',default="CPSC2018",help="CPSC2018 or chapmanshaoxing or PTBXL")
 parser.add_argument('--cv_range',default=[0,1,2,3,4],nargs="+",type=int,help="folds to train")
 
 args = parser.parse_args()
