@@ -21,8 +21,6 @@
 # python 10_fold_training.py --arch minirocket  --gpu_num 5 --max_len 5000 --dataset ChapmanShaoxing  --batch_tfms sc n bp &
 # python 10_fold_training.py --arch minirocket --gpu_num 4 --max_len 5000 --dataset ChapmanShaoxing  --batch_tfms sc n bp sh &
 
-# 5 fold training for norm and scaling
-python 5fold_training.py --arch inception --gpu_num 0 --max_len 10000 --batch_tfms sc --scale_type nearest_exact --scale 0.5 
 
 
 # inception cpsc
@@ -96,4 +94,15 @@ python scaling_experiment.py --arch xresnet1d101 --gpu_num 1 --max_len 5000 --ba
 python scaling_experiment.py --arch xresnet1d101 --gpu_num 2 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.75 --dataset PTBXL &
 python scaling_experiment.py --arch xresnet1d101 --gpu_num 3 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 1 --dataset PTBXL &
 
+
+##### bandpass experiments 
+# inception cpsc
+python bandpass_experiment.py --arch inception --gpu_num 0 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 &
+python bandpass_experiment.py --arch inception --gpu_num 1 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 &
+python bandpass_experiment.py --arch inception --gpu_num 2 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 &
+
+
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 &
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 &
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 &
 

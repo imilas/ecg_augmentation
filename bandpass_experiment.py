@@ -108,18 +108,18 @@ for cv_num in range(20):
     elif architecture == "xresnet1d101":
         model = xresnet1d101(dls.vars, dls.c)
     # try : loss_func = BCEWithLogitsLossFlat(pos_weight=dls.train.cws.sqrt())
-    
+    model_name = "%s_%s_%s_%s_%s-%s_%s"%(architecture,DATASET_ID,processing_type,sf,HP,LP,cv_num)
     learn = Learner(dls, model, metrics=metrics,
 #                     opt_func = wrap_optimizer(torch.optim.Adam,weight_decay=6.614e-07),
                     cbs=[fastai.callback.all.SaveModelCallback(
-                        monitor="F1_multi",fname="%s_%s_%s_%s_%s"%(architecture,DATASET_ID,processing_type,sf,cv_num)),
+                        monitor="F1_multi",fname=model_name),
                         fastai.callback.all.EarlyStoppingCallback(monitor='F1_multi', min_delta=0.005, patience=50)
                         ],
-                    model_dir="models/scaling/")
+                    model_dir="models/bandpassing/")
 
     learn.fit_one_cycle(300, lr_max=0.01,)
     # now test it on test set
-    learn.load("%s_%s_%s_%s_%s"%(architecture,DATASET_ID,processing_type,sf,cv_num))
+    learn.load(model_name)
     fold_splits = cv_splits[cv_num]
     dsets = TSDatasets(X.astype(float)[:,:,0:max_len], y_multi, tfms=tfms, splits=(fold_splits[0],fold_splits[2])) # inplace=True by default
     dls   = TSDataLoaders.from_dsets(dsets.train,dsets.valid, bs=[128, 128], batch_tfms=batch_tfms, num_workers=0)
@@ -129,7 +129,7 @@ for cv_num in range(20):
     y_test = valid_targets
     report = classification_report(y_test, y_pred,target_names = dls.vocab.o2i.keys(),digits=3,output_dict=True)
     df = pd.DataFrame(report).reset_index()
-    df.to_csv("models/scaling/csvs/%s_%s_%s_%s_%s.csv"%(architecture,DATASET_ID,processing_type,sf,cv_num),index=False)
+    df.to_csv("models/bandpassing/csvs/%s.csv"%model_name,index=False)
     df
 
 
