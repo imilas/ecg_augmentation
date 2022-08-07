@@ -96,7 +96,7 @@ python scaling_experiment.py --arch xresnet1d101 --gpu_num 3 --max_len 5000 --ba
 
 
 ##### bandpass experiments 
-# inception cpsc
+# cpsc
 python bandpass_experiment.py --arch inception --gpu_num 0 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 &
 python bandpass_experiment.py --arch inception --gpu_num 1 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 &
 python bandpass_experiment.py --arch inception --gpu_num 2 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 &
@@ -106,3 +106,38 @@ python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --bat
 python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 &
 python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 &
 
+
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 0 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 &
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 1 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 &
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 2 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 &
+
+# chapman
+python bandpass_experiment.py --arch inception --gpu_num 0 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 --dataset ChapmanShaoxing &
+python bandpass_experiment.py --arch inception --gpu_num 1 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 --dataset ChapmanShaoxing &
+python bandpass_experiment.py --arch inception --gpu_num 2 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 --dataset ChapmanShaoxing &
+
+
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 --dataset ChapmanShaoxing &
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 --dataset ChapmanShaoxing &
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 --dataset ChapmanShaoxing &
+
+
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 --dataset ChapmanShaoxing &
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 4 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 --dataset ChapmanShaoxing &
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 5 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 --dataset ChapmanShaoxing &
+
+# PTBXL
+
+python bandpass_experiment.py --arch inception --gpu_num 0 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 --dataset PTBXL &
+python bandpass_experiment.py --arch inception --gpu_num 1 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 --dataset PTBXL &
+python bandpass_experiment.py --arch inception --gpu_num 2 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 --dataset PTBXL &
+
+
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 --dataset PTBXL &
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 --dataset PTBXL &
+python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 --dataset PTBXL &
+
+
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 0 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 --dataset PTBXL &
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 1 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 --dataset PTBXL &
+python bandpass_experiment.py --arch xresnet1d101 --gpu_num 2 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 --dataset PTBXL &
