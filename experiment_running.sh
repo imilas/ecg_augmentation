@@ -22,7 +22,7 @@
 # python 10_fold_training.py --arch minirocket --gpu_num 4 --max_len 5000 --dataset ChapmanShaoxing  --batch_tfms sc n bp sh &
 
 
-
+### Scaling Experiments ####
 # inception cpsc
 python scaling_experiment.py --arch inception --gpu_num 0 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.1 &
 python scaling_experiment.py --arch inception --gpu_num 1 --max_len 5000 --batch_tfms sc n --scale_type nearest-exact --scale 0.25 &
@@ -141,3 +141,21 @@ python bandpass_experiment.py --arch minirocket --gpu_num 3 --max_len 5000 --bat
 python bandpass_experiment.py --arch xresnet1d101 --gpu_num 0 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 30 --dataset PTBXL &
 python bandpass_experiment.py --arch xresnet1d101 --gpu_num 1 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 50 --dataset PTBXL &
 python bandpass_experiment.py --arch xresnet1d101 --gpu_num 2 --max_len 5000 --batch_tfms sc n bp --scale_type nearest-exact --scale 0.5 --HP 1 --LP 100 --dataset PTBXL &
+
+
+### norm experiments ###
+
+# cpsc
+python norm_experiment.py --arch inception --gpu_num 1 --max_len 5000 --scale_type nearest-exact --scale 1 &
+python norm_experiment.py --arch minirocket --gpu_num 2 --max_len 5000  --scale_type nearest-exact --scale 1 &
+python norm_experiment.py --arch xresnet1d101 --gpu_num 4 --max_len 5000 --scale_type nearest-exact --scale 1 &
+
+# chapman
+python norm_experiment.py --arch inception --gpu_num 1 --max_len 5000 --scale_type nearest-exact --scale 1 --dataset ChapmanShaoxing & 
+python norm_experiment.py --arch minirocket --gpu_num 2 --max_len 5000  --scale_type nearest-exact --scale 1 --dataset ChapmanShaoxing & 
+python norm_experiment.py --arch xresnet1d101 --gpu_num 3 --max_len 5000 --scale_type nearest-exact --scale 1 --dataset ChapmanShaoxing & 
+
+# ptbxl
+python norm_experiment.py --arch inception --gpu_num 1 --max_len 5000 --scale_type nearest-exact --scale 1 --dataset PTBXL & 
+python norm_experiment.py --arch minirocket --gpu_num 2 --max_len 5000  --scale_type nearest-exact --scale 1 --dataset PTBXL & 
+python norm_experiment.py --arch xresnet1d101 --gpu_num 0 --max_len 5000 --scale_type nearest-exact --scale 1 --dataset PTBXL &
