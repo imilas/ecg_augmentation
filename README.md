@@ -18,3 +18,4 @@ You can also choose to install the libraries via pip.
 2. run parse_data.ipynb notebook to convert the datasets to numpy arrays (this helps with very quick dataloading)
 3. run inception.ipynb to see how to make a dataloaders and run one of TSAI's models on the data (you can use any pytorch compatible model): 
 4. run transformation.ipynb to play around with transformations
+5. run experiment_analysis_*.ipynb to see how we analyzed experiment results
