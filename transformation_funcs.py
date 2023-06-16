@@ -2,6 +2,7 @@ from fastai.vision.augment import RandTransform
 from tsai.all import *
 from scipy.interpolate import CubicSpline
 import torchaudio
+
 class Scale(Transform):
     # resampling (probably want downsampling)
     def __init__(self, size=None, scale_factor=None,mode="nearest",**kwargs):
@@ -13,15 +14,61 @@ class Scale(Transform):
         output = F.interpolate(o,self.size,self.scale_factor,mode = self.mode)
         
         return output
-    
+# normlization methods
 class Normalize(Transform):
-    # normalize by dividing each sample by its max value
+    # normalize by dividing each ecg by its max value (each lead divided by max value of entire ecg)
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     def encodes(self, o: TSTensor):
         output = o.clone()
-        for i in range(len(o)):
-            output[i] = output[i]/output[i].max()
+        
+        for i in range(len(output)):
+            output[i] = output[i]/output[i].max() # this should probably be absolute value
+        return output
+    
+class NormMinMax(Transform):
+    # 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def encodes(self, output: TSTensor):
+        for i in range(len(output)):
+            output[i] = (output[i]-output[i].min())/(output[i].max()-output[i].min())
+        return output
+
+class NormMaxDiv(Transform):
+    # normalize by dividing each ecg by its max value (each lead divided by max value of entire ecg)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def encodes(self, output: TSTensor):
+        for i in range(len(output)):
+            output[i] = output[i]/output[i].max() # this should probably be absolute value
+        return output
+
+class NormZScore(Transform):
+    #
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def encodes(self, output: TSTensor):
+        for i in range(len(output)):
+            output[i] = (output[i]-output[i].mean())/(output[i].std()) 
+        return output
+
+class NormMedian(Transform):
+    # normalize by y = (x-median)/median(abs(x-median))
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def encodes(self, output: TSTensor):
+        for i in range(len(output)):
+            output[i] = (output[i]-output[i].median()) / torch.abs(output[i]-output[i].median()).median()
+        return output
+    
+class NormDecimalScaling(Transform):
+    # normalize by y = x/(10**log(max))
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def encodes(self, output: TSTensor):
+        for i in range(len(output)):
+            output[i] = (output[i])/10**torch.floor(torch.log10(output[i].max()))
         return output
     
 class MulNoise(RandTransform):
@@ -111,6 +158,6 @@ class BandPass(Transform):
         signal_len = o.shape[-1]
         o = o.reshape([-1,signal_len])
         o = torchaudio.functional.highpass_biquad(o,sample_rate=self.sr,cutoff_freq = self.high_cut)
-        o = torchaudio.functional.lowpass_biquad(o,sample_rate=self.sr,cutoff_freq = self.low_cut)
+#         o = torchaudio.functional.lowpass_biquad(o,sample_rate=self.sr,cutoff_freq = self.low_cut)
         o = o.reshape([-1,self.leads,signal_len])
         return o
