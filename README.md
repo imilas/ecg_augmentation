@@ -10,7 +10,9 @@ In this project we:
 
 ## Requirements
 This project makes heavy use of the tsai library (version 0.3.2), which requires pytorch. We recommend use of the conda environment. 
-You can clone our conda environment with ```conda create --name <env> --file requirements.txt```
+You can clone our conda environment with ```conda create --name <env>```
+	- conda activate <env>
+	- install the requirements with ```pip install -r pip-requirements.txt``` 
 You can also choose to install the libraries via pip. 
 
 ## How to get started:
