@@ -32,7 +32,7 @@ print("gpu num :",args.gpu_num)
 print("scaling :",args.scale)
 print("training folds:",args.cv_range)
 print("max len:",args.max_len)
-print("dataset",args.datset)
+print("dataset",args.dataset)
 
 torch.cuda.set_device(args.gpu_num)
 max_len = args.max_len
