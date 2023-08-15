@@ -13,7 +13,7 @@ This project makes heavy use of the tsai library (version 0.3.2), which requires
 You can clone our conda environment with ```conda create --name <env>```
 	- conda activate <env>
 	- install the requirements with ```pip install -r pip-requirements.txt``` 
-You can also choose to install the libraries via pip. 
+
 
 ## How to get started:
 1. run this shell script to download physionet files: get_data.sh
