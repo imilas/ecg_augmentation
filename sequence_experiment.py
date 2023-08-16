@@ -25,7 +25,7 @@ parser.add_argument('--arch',default="inception",help="inception or minirocket")
 parser.add_argument('--dataset',default="CPSC2018",help="CPSC2018 or chapmanshaoxing or PTBXL")
 # parser.add_argument('--cv_range',default=[0,1,2,3,4],nargs="+",type=int,help="folds to train")
 
-args = parser.parse_args(args=[])
+args = parser.parse_args()
 torch.cuda.set_device(args.gpu_num)
 cv_num = args.cv_num
 max_len = 4000
@@ -91,14 +91,19 @@ label_counts = collections.Counter([a for r in y_multi for a in r])
 
 tfms  = [None, TSMultiLabelClassification()]
 
-
+def float_if_valid(var):
+    if var != "None":
+        return np.float(var)
+    else:
+        return var
+        
 for experiment_name in experiment_names:
     ''' getting the function vars out of the experiment file name'''
     # experiment_name = experiment_names[0]
     vars = experiment_name.split("_")
     processing_type = vars[2].split("-")
-    sf = np.float(vars[3])
-    HP,LP = np.float(vars[4]),np.float(vars[5])
+    sf = float_if_valid(vars[3])
+    HP,LP = float_if_valid(vars[4]),float_if_valid(vars[5])
     norm_type = vars[6]
     print("processing type: %s \n hp-lp:%s,%s \n scale factor:%s \n norm_type:%s"%
           (processing_type,HP,LP,sf,norm_type))
@@ -109,9 +114,11 @@ for experiment_name in experiment_names:
         if t == "n":
             batch_tfms.append(tfs.NormMinMax())
         if t == "bp":
-            batch_tfms.append(tfs.BandPass(int(sf*500),low_cut=LP, high_cut=HP,leads=12,))
-        if t == "sh":
-            batch_tfms.append(tfs.RandomShift(0.1))
+            if sc == "None": # if there's no scaling, then we scale by 0.5 for faster processing
+                batch_tfms.append(tfs.Scale(scale_factor=0.5,mode="nearest-exact"))
+                batch_tfms.append(tfs.BandPass(int(0.5*500),low_cut=LP, high_cut=HP,leads=12,))
+            else:
+                 batch_tfms.append(tfs.BandPass(int(0.5*500),low_cut=LP, high_cut=HP,leads=12,))
     print("transforms:\n",[x.name for x in batch_tfms])
     csv_path = "models/sequences/csvs/%s_%s.csv"%(experiment_name,cv_num) ### CHANGE THIS 
     
@@ -130,14 +137,14 @@ for experiment_name in experiment_names:
     learn = Learner(dls, model, metrics=metrics,
     #                     opt_func = wrap_optimizer(torch.optim.Adam,weight_decay=6.614e-07),
                     cbs=[fastai.callback.all.SaveModelCallback(
-                        monitor="F1_multi",fname="%s_%s_%s_%s_%s"%(architecture,DATASET_ID,processing_type,sf,cv_num)),
+                        monitor="F1_multi",fname="%s_%s"%(experiment_name ,cv_num)),
                         fastai.callback.all.EarlyStoppingCallback(monitor='F1_multi', min_delta=0.005, patience=50)
                         ],
                     model_dir="models/sequences/")
     
     learn.fit_one_cycle(2, lr_max=0.01,)
     # now test it on test set
-    learn.load("%s_%s_%s_%s_%s"%(architecture,DATASET_ID,processing_type,sf,cv_num))
+    learn.load("%s_%s"%(experiment_name ,cv_num))
     fold_splits = cv_splits[cv_num]
     dsets = TSDatasets(X.astype(float)[:,:,0:max_len], y_multi, tfms=tfms, splits=(fold_splits[0],fold_splits[2])) # inplace=True by default
     dls   = TSDataLoaders.from_dsets(dsets.train,dsets.valid, bs=[128, 128], batch_tfms=batch_tfms, num_workers=0)
